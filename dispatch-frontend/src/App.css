@@ -1,0 +1,57 @@
+.checkout-container { max-width: 500px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; color: #333; text-align: left; }
+.back-button { border: none; background: none; color: #0071dc; cursor: pointer; font-size: 16px; margin-bottom: 20px; }
+
+.delivery-toggle { display: flex; gap: 10px; margin-bottom: 20px; }
+.toggle-btn { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 25px; background: white; cursor: pointer; }
+.toggle-btn.active { background: #0071dc; color: white; border-color: #0071dc; font-weight: bold; }
+
+.customer-info { display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 30px; }
+.customer-info p { margin: 5px 0 0; color: #666; font-size: 14px; }
+.change-btn { color: #0071dc; border: none; background: none; font-weight: bold; cursor: pointer; }
+
+.days-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; }
+.day-item { min-width: 60px; text-align: center; cursor: pointer; }
+.day-label { font-size: 12px; color: #666; display: block; margin-bottom: 5px; }
+.day-circle { width: 45px; height: 45px; border: 1px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 14px; }
+.day-item.selected .day-circle { background: #0071dc; color: white; border-color: #0071dc; }
+.day-item.disabled { opacity: 0.5; cursor: not-allowed; }
+.status-label { font-size: 10px; color: red; }
+
+.time-slots { margin-bottom: 30px; }
+.slot-item { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #eee; }
+.slot-time { margin-left: 10px; font-weight: 500; }
+.slot-price { color: #2e7d32; font-weight: bold; }
+
+.reserve-final-btn { width: 100%; padding: 15px; background: #ffc220; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+.reserve-final-btn:disabled { background: #eee; color: #999; }
+
+.alert { padding: 10px; border-radius: 5px; margin-top: 10px; text-align: center; }
+.success { background: #e8f5e9; color: #2e7d32; }
+.error { background: #ffebee; color: #c62828; }
+.slot-disabled {
+  opacity: 0.5;
+  background-color: #f9f9f9;
+}
+
+.slot-disabled .slot-price {
+  color: #999 !important;
+}
+
+.day-disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+.day-disabled .day-circle {
+  border-style: dashed;
+  color: #ff4d4f;
+  background-color: #fff1f0;
+}
+
+.status-label {
+  font-size: 10px;
+  color: #ff4d4f;
+  font-weight: bold;
+  display: block;
+  margin-top: 2px;
+}
