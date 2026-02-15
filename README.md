@@ -61,6 +61,21 @@ El proyecto está configurado para ejecutarse sin necesidad de instalar bases de
 
 ---
 
+## 🧪 Calidad de Software y Pruebas
+
+Para garantizar la robustez del sistema y facilitar la integración, se incluyeron las siguientes herramientas de verificación:
+
+### 1. Pruebas Unitarias (JUnit 5 & Mockito)
+Se implementaron tests unitarios para validar la lógica de negocio crítica en la capa de servicios, cubriendo los siguientes escenarios:
+* **Flujo de Éxito:** Validación de reserva correcta y descuento de capacidad.
+* **Reglas de Negocio:** Verificación de excepción `InsufficientCapacityException` cuando la capacidad es cero.
+* **Manejo de Errores:** Validación de `ResourceNotFoundException` ante IDs inexistentes.
+
+**Para ejecutar los tests:**
+```bash
+mvn test
+---
+
 ## 🧪 Pruebas de la API (Endpoints)
 
 El proyecto incluye un `DataSeeder` que carga datos automáticamente al iniciar.
@@ -90,6 +105,15 @@ Si se intenta reservar más de la capacidad permitida (ej: 3 cupos), el sistema 
 
 
 ```
+###2. Colección de Postman
+   En la raíz del repositorio se encuentra el archivo "REST API Walmart.postman_collection.json".
+
+Endpoints incluidos: Listar ventanas y Realizar reserva.
+
+Variables: Configurado para apuntar a localhost:8080 por defecto.
+
+Uso: Importar el archivo en Postman para realizar pruebas manuales de forma rápida.
+
 ---
 
 ## 🎨 Interfaz de Usuario (Frontend React)
@@ -129,8 +153,8 @@ npm start
 ```
 La aplicación se abrirá automáticamente en: http://localhost:3000
 
-📂 Estructura Final del Proyecto Fullstack
-Para una correcta evaluación, el proyecto se organiza de la siguiente manera:
+📂 Estructura Final del Proyecto Fullstack.
+El proyecto se organiza de la siguiente manera:
 
 Ecosistema Backend (IntelliJ IDEA): Ubicado en la raíz y carpeta src/. Contiene toda la lógica de persistencia y reglas de negocio en Java.
 

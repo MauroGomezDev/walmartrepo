@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,5 +48,6 @@ public class DispatchWindow {
     @CollectionTable(name = "window_capacities", joinColumns = @JoinColumn(name = "window_id"))
     @MapKeyColumn(name = "zone_name")
     @Column(name = "capacity")
-    private Map<String, Integer> capacityByZone;
+    //private Map<String, Integer> capacityByZone;
+    private Map<String, Integer> capacityByZone = new HashMap<>();
 }
