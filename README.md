@@ -43,7 +43,7 @@ El proyecto está configurado para ejecutarse sin necesidad de instalar bases de
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/tu-usuario/walmart-challenge.git](https://github.com/tu-usuario/walmart-challenge.git)
+    git clone https://github.com/MauroGomezDev/walmartrepo.git
     cd walmart-challenge
     ```
 
