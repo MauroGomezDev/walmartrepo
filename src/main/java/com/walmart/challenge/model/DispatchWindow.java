@@ -50,4 +50,8 @@ public class DispatchWindow {
     @Column(name = "capacity")
     //private Map<String, Integer> capacityByZone;
     private Map<String, Integer> capacityByZone = new HashMap<>();
+
+    /** * Costo franja horaria
+     */
+    private Double cost; // En el archivo DispatchWindow.java
 }

@@ -150,26 +150,40 @@ const isDaySoldOut = (dateStr) => {
 
     <section className="time-slots">
       {loading ? <p>Cargando...</p> : (
-        windows.filter(w => w.date === selectedDay).map(win => (
-          <div key={win.id} className={`slot-item ${win.capacityByZone[currentZone] <= 0 ? 'slot-disabled' : ''}`}>
-            <label>
-              <input 
-                type="radio" 
-                name="slot" 
-                checked={selectedWindowId === win.id}
-                onChange={() => {
-                  setSelectedWindowId(win.id);
-                  setMessage({ text: '', type: '' }); // Limpia error al elegir otro horario
-                }}
-                disabled={win.capacityByZone[currentZone] <= 0}
-              />
-              <span className="slot-time">{win.start} - {win.end}</span>
-            </label>
-            <span className="slot-price">
-              {win.capacityByZone[currentZone] > 0 ? '$2.990' : 'Agotado'}
-            </span>
-          </div>
-        ))
+        windows.filter(w => w.date === selectedDay).map(win => {
+          // Calculamos la capacidad para la zona actual
+          const available = win.capacityByZone[currentZone] || 0;
+          const isFull = available <= 0;
+
+          return (
+            <div key={win.id} className={`slot-item ${isFull ? 'slot-disabled' : ''}`}>
+              <label>
+                <input 
+                  type="radio" 
+                  name="slot" 
+                  checked={selectedWindowId === win.id}
+                  onChange={() => {
+                    setSelectedWindowId(win.id);
+                    setMessage({ text: '', type: '' });
+                  }}
+                  disabled={isFull}
+                />
+                <div className="slot-info">
+                  <span className="slot-time">{win.start} - {win.end}</span>
+                  {/* Mostramos cuántos quedan para que el evaluador vea la concurrencia */}
+                  <span className={`slot-stock ${isFull ? 'out' : ''}`}>
+                    {isFull ? ' (Agotado)' : ` (${available} cupos)`}
+                  </span>
+                </div>
+              </label>
+              
+              <span className="slot-price">
+                {/* Usamos el costo que viene del Backend (DataSeeder) */}
+                {isFull ? '---' : `$${win.cost?.toLocaleString('es-CL') || '2.990'}`}
+              </span>
+            </div>
+          );
+        })
       )}
     </section>
 

@@ -114,11 +114,13 @@ Variables: Configurado para apuntar a localhost:8080 por defecto.
 
 Uso: Importar el archivo en Postman para realizar pruebas manuales de forma rápida.
 
+* **Automatización:** La colección utiliza un *Pre-request Script* para generar automáticamente los IDs basados en la fecha actual, asegurando que las pruebas funcionen cualquier día del año sin configuración manual.
+
 ---
 
 ## 🎨 Interfaz de Usuario (Frontend React)
 
-Se desarrolló una aplicación complementaria en **React** para visualizar y gestionar las reservas de manera interactiva. Esta interfaz emula un flujo de checkout profesional (estilo Walmart) y fue desarrollada utilizando **Visual Studio Code**.
+Se desarrolló una aplicación complementaria en **React** para visualizar y gestionar las reservas de manera interactiva, basada en el ejemplo del requerimiento. Esta interfaz emula un flujo de checkout profesional (estilo Walmart) y fue desarrollada utilizando **Visual Studio Code**.
 
 ### 🌟 Características Principales
 * **Selector Dinámico de Fechas:** Interfaz horizontal con círculos de fecha que se sincronizan automáticamente con el Backend.
@@ -153,10 +155,35 @@ npm start
 ```
 La aplicación se abrirá automáticamente en: http://localhost:3000
 
+### 📸 Vista Previa de la Interfaz
+| Selección de Horarios | Confirmación de Reserva |
+| :---: | :---: |
+| ![Checkout](./screenshots/checkout_view.png) | ![Success](./screenshots/success_msg.png) |
+
+**Nota sobre la Interfaz:** La aplicación en React emula un flujo de checkout profesional. Para efectos de este desafío, la funcionalidad operativa se centra exclusivamente en la consulta de ventanas y la confirmación de reservas. Los demás elementos visuales (como los botones de perfil o métodos de entrega alternativos) son de carácter demostrativo para contextualizar la experiencia de usuario.
+
 📂 Estructura Final del Proyecto Fullstack.
 El proyecto se organiza de la siguiente manera:
 
 Ecosistema Backend (IntelliJ IDEA): Ubicado en la raíz y carpeta src/. Contiene toda la lógica de persistencia y reglas de negocio en Java.
 
 Ecosistema Frontend (VS Code): Ubicado en la subcarpeta dispatch-frontend/. Contiene los componentes, estilos y lógica de consumo de API en React.
+
+---
+
+### 🛡️ Estrategia de Concurrencia y Escalabilidad (Puntos Extra)
+
+Para garantizar la consistencia absoluta de los datos y cumplir con el requerimiento de evitar sobre-reservas en entornos de alta demanda (como eventos de alta transaccionalidad o CyberDays), se definieron las siguientes estrategias:
+
+#### 1. Implementación Actual: Consistencia Fuerte
+Se optó por el uso de **Pessimistic Locking** (`SELECT FOR UPDATE`) mediante la anotación `@Lock(LockModeType.PESSIMISTIC_WRITE)`.
+* **Justificación:** En un dominio crítico como la reserva de ventanas de despacho, la integridad del inventario es prioridad. Esta estrategia bloquea el registro en la base de datos desde la lectura hasta la confirmación de la reserva, garantizando que dos usuarios no puedan tomar el último cupo simultáneamente (*Race Condition*).
+
+#### 2. Escalabilidad en Entornos de Producción
+Para escalar esta solución a un entorno con millones de peticiones por segundo, propondría las siguientes optimizaciones:
+* **Bloqueos Distribuidos (Redis/Redisson):** Movería la gestión de bloqueos de la base de datos relacional a una capa de caché distribuida. Esto reduce la latencia y evita el agotamiento del pool de conexiones de la base de datos principal.
+* **Procesamiento Asíncrono:** Implementaría colas de mensajería (como RabbitMQ o Kafka) para encolar las peticiones de reserva en momentos de tráfico extremo, procesándolas de manera secuencial y notificando al usuario el resultado vía WebSockets o notificaciones push.
+* **Optimistic Locking:** En bloques horarios con baja probabilidad de colisión, se podría alternar a un bloqueo optimista (usando la anotación `@Version`) para mejorar el throughput general del sistema.
+
+---
 

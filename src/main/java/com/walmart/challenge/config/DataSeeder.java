@@ -8,73 +8,64 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Configuracion para la carga inicial automatizada de datos de prueba.
- * Genera un set de datos completo para multiples dias facilitando la visualizacion
- * en el frontend y la realizacion de pruebas de capacidad.
+ * Configuración para la carga inicial automatizada de datos de prueba.
+ * Versión optimizada para pruebas de capacidad y costos por bloque.
  * * @author Mauricio Gomez
- * @version 1.1
+ * @version 1.2
  */
 @Configuration
 public class DataSeeder {
 
-    /**
-     * Metodo que inicializa la base de datos con un ciclo de ventanas para 7 dias.
-     * Crea bloques horarios de mañana y tarde para cada fecha.
-     * * @param windowRepo Repositorio de ventanas de despacho para persistencia
-     * @return CommandLineRunner ejecutado al inicio de la aplicacion
-     */
     @Bean
     CommandLineRunner initDatabase(DispatchWindowRepository windowRepo) {
         return args -> {
+            windowRepo.deleteAll(); // Limpiamos para evitar duplicados al reiniciar
             LocalDate today = LocalDate.now();
 
-            // Generamos ventanas para los proximos 7 dias
+            // Generamos 3 franjas horarias por día para los próximos 7 días
             for (int i = 0; i < 7; i++) {
                 LocalDate date = today.plusDays(i);
-                String dateStr = date.toString().replace("-", "");
 
-                // Ventana Bloque Mañana (09:00 - 11:00)
-                DispatchWindow morning = new DispatchWindow();
-                morning.setId("w-" + dateStr + "-1");
-                morning.setDate(date);
-                morning.setStart(LocalTime.of(9, 0));
-                morning.setEnd(LocalTime.of(11, 0));
-                morning.setCapacityTotal(10);
-                morning.setCapacityByZone(Map.of(
-                        "zone-1", 5,
-                        "zone-2", 3,
-                        "zone-3", 2
-                ));
-                windowRepo.save(morning);
+                // Bloque Mañana - Costo menor
+                createWindow(windowRepo, date, "1", LocalTime.of(9, 0), LocalTime.of(11, 0), 2500.0);
 
-                // Ventana Bloque Tarde (14:00 - 16:00)
-                DispatchWindow afternoon = new DispatchWindow();
-                afternoon.setId("w-" + dateStr + "-2");
-                afternoon.setDate(date);
-                afternoon.setStart(LocalTime.of(14, 0));
-                afternoon.setEnd(LocalTime.of(16, 0));
-                afternoon.setCapacityTotal(8);
-                afternoon.setCapacityByZone(Map.of(
-                        "zone-1", 4,
-                        "zone-2", 2,
-                        "zone-3", 2
-                ));
-                windowRepo.save(afternoon);
+                // Bloque Mediodía - Costo estándar
+                createWindow(windowRepo, date, "2", LocalTime.of(12, 0), LocalTime.of(14, 0), 3500.0);
+
+                // Bloque Tarde - Costo prime
+                createWindow(windowRepo, date, "3", LocalTime.of(16, 0), LocalTime.of(18, 0), 4500.0);
             }
-
-            // Ejemplo de una ventana agotada para pruebas de validacion (para el dia 7)
-            LocalDate lastDay = today.plusDays(7);
-            DispatchWindow soldOut = new DispatchWindow();
-            soldOut.setId("w-" + lastDay.toString().replace("-", "") + "-1");
-            soldOut.setDate(lastDay);
-            soldOut.setStart(LocalTime.of(11, 0));
-            soldOut.setEnd(LocalTime.of(13, 0));
-            soldOut.setCapacityTotal(0);
-            soldOut.setCapacityByZone(Map.of("zone-1", 0, "zone-2", 0));
-            windowRepo.save(soldOut);
         };
+    }
+
+    /**
+     * Método auxiliar para crear y guardar una ventana con capacidad limitada y costo.
+     */
+    private void createWindow(DispatchWindowRepository repo, LocalDate date, String blockId,
+                              LocalTime start, LocalTime end, double cost) {
+
+        String dateStr = date.toString().replace("-", "");
+        DispatchWindow window = new DispatchWindow();
+
+        window.setId("w-" + dateStr + "-" + blockId);
+        window.setDate(date);
+        window.setStart(start);
+        window.setEnd(end);
+        window.setCost(cost); // Atributo solicitado en el requerimiento
+
+        // CAPACIDAD: Solo 3 cupos por zona para facilitar la prueba de "Agotado"
+        Map<String, Integer> capacities = new HashMap<>();
+        capacities.put("zone-1", 3);
+        capacities.put("zone-2", 3);
+        capacities.put("zone-3", 1); // Una zona casi agotada por defecto
+
+        window.setCapacityByZone(capacities);
+        window.setCapacityTotal(7); // Suma de las capacidades por zona
+
+        repo.save(window);
     }
 }
