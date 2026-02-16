@@ -10,7 +10,7 @@
 		{
 			"name": "Muestra ventanas",
 			"event": [
-				{
+				{ 
 					"listen": "test",
 					"script": {
 						"type": "text/javascript",
@@ -48,7 +48,7 @@
 			"name": "Post error 404",
 			"event": [
 				{
-					"listen": "test",
+					"listen":  "test",
 					"script": {
 						"type": "text/javascript",
 						"exec": [
